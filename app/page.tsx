@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -8,32 +9,14 @@ import Image from 'next/image'
 import { If } from '@/components/if'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { Archive, ArrowDownToLine, CircleX, X } from 'lucide-react'
+import { Archive, ArrowDownToLine, CircleX, Eye, X } from 'lucide-react'
 
 const thumbnailVariants = [
   {
-    key: 'default',
-    label: 'Default',
-    resolution: '120x90',
-    quality: 'Low',
-  },
-  {
-    key: 'mqdefault',
-    label: 'Medium Quality',
-    resolution: '320x180',
-    quality: 'SD',
-  },
-  {
-    key: '0',
-    label: 'Thumbnail 0',
-    resolution: '480x360',
-    quality: 'HD (Static)',
-  },
-  {
-    key: 'hqdefault',
-    label: 'High Quality',
-    resolution: '480x360',
-    quality: 'HD',
+    key: 'maxresdefault',
+    label: 'Maximum Resolution',
+    resolution: '1280x720',
+    quality: 'Full HD',
   },
 
   {
@@ -43,12 +26,25 @@ const thumbnailVariants = [
     quality: 'SD+',
   },
   {
-    key: 'maxresdefault',
-    label: 'Maximum Resolution',
-    resolution: '1280x720',
-    quality: 'Full HD',
+    key: 'hqdefault',
+    label: 'High Quality',
+    resolution: '480x360',
+    quality: 'HD',
   },
-].reverse()
+  {
+    key: '0',
+    label: 'Thumbnail 0',
+    resolution: '480x360',
+    quality: 'HD (Static)',
+  },
+  {
+    key: 'mqdefault',
+    label: 'Medium Quality',
+    resolution: '320x180',
+    quality: 'SD',
+  },
+  { key: 'default', label: 'Default', resolution: '120x90', quality: 'Low' },
+]
 
 export default function Home() {
   const [url, setUrl] = useState('')
@@ -115,7 +111,7 @@ export default function Home() {
             onChange={(e) => setUrl(e.target.value)}
             className="pr-10"
           />
-          {url && (
+          <If condition={url}>
             <button
               type="button"
               onClick={() => setUrl('')}
@@ -123,7 +119,7 @@ export default function Home() {
             >
               <X size={16} />
             </button>
-          )}
+          </If>
         </div>
 
         <Button type="submit" className="cursor-pointer">
@@ -138,8 +134,8 @@ export default function Home() {
         </div>
       </If>
 
-      <If condition={videoId && !error}>
-        <Card className="w-full max-w-2xl mx-auto p-6">
+      <If condition={videoId}>
+        <Card className="w-full max-w-full lg:max-w-6xl mx-auto p-6">
           <CardContent className="space-y-4">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
@@ -154,8 +150,7 @@ export default function Home() {
                       'Downloading…'
                     ) : (
                       <>
-                        <Archive size={16} />
-                        <span>Download All</span>
+                        <Archive size={16} /> Download All
                       </>
                     )}
                   </Button>
@@ -175,35 +170,36 @@ export default function Home() {
                         height={270}
                         className="w-full rounded-md"
                       />
-                      <div className="mt-2">
-                        <div className="text-sm">
-                          <p className="font-medium">{label}</p>
-                          <p className="text-gray-500">
-                            {resolution} • {quality}
-                          </p>
+                      <div className="mt-2 flex flex-col text-sm">
+                        <p className="font-medium">{label}</p>
+                        <p className="text-gray-500">
+                          {resolution} • {quality}
+                        </p>
+                        <div className="flex justify-between">
+                          <a
+                            href={`https://img.youtube.com/vi/${videoId}/${key}.jpg`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 text-sm flex items-center gap-1"
+                          >
+                            <Eye size={16} />
+                            <span>View</span>
+                          </a>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="cursor-pointer"
+                            onClick={async () => {
+                              const url = `https://img.youtube.com/vi/${videoId}/${key}.jpg`
+                              const res = await fetch(url)
+                              const blob = await res.blob()
+                              saveAs(blob, `${label.replace(/\s+/g, '_')}.jpg`)
+                            }}
+                          >
+                            <ArrowDownToLine size={14} className="mr-1" />
+                            Download
+                          </Button>
                         </div>
-                        <a
-                          href={`https://img.youtube.com/vi/${videoId}/${key}.jpg`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 text-sm mt-1 inline-block"
-                        >
-                          View
-                        </a>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="ml-2 cursor-pointer"
-                          onClick={async () => {
-                            const url = `https://img.youtube.com/vi/${videoId}/${key}.jpg`
-                            const res = await fetch(url)
-                            const blob = await res.blob()
-                            saveAs(blob, `${label.replace(/\s+/g, '_')}.jpg`)
-                          }}
-                        >
-                          <ArrowDownToLine size={14} className="mr-1" />{' '}
-                          Download
-                        </Button>
                       </div>
                     </div>
                   )

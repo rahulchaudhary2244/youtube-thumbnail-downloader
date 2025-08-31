@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'YouTube Thumbnail Downloader',
-  description: 'Download YouTube video thumbnails easily.',
+  title: 'Download YouTube Thumbnails in HD | Free Online Tool',
+  description:
+    'Easily download YouTube thumbnails in HD and 4K. Just paste the video URL to get instant images.',
 }
 
 export default function RootLayout({
@@ -26,10 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head>
-        <meta
-          property="og:description"
-          content="Download YouTube video thumbnails easily."
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -40,7 +37,7 @@ export default function RootLayout({
               url: 'https://youtube-thumbnail-downloader-easy.vercel.app/',
               applicationCategory: 'Utilities',
               operatingSystem: 'All',
-              description: 'Download YouTube video thumbnails easily.',
+              description: 'Instantly download YouTube video thumbnails.',
               creator: {
                 '@type': 'Person',
                 name: 'Rahul Chaudhary',

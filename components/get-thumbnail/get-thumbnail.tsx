@@ -9,43 +9,9 @@ import { If } from '@/components/if'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { Archive, ArrowDownToLine, CircleX, Eye, X } from 'lucide-react'
+import { THUMBNAIL_VARIANTS } from './constants'
 
-const thumbnailVariants = [
-  {
-    key: 'maxresdefault',
-    label: 'Maximum Resolution',
-    resolution: '1280x720',
-    quality: 'Full HD',
-  },
-
-  {
-    key: 'sddefault',
-    label: 'Standard Definition',
-    resolution: '640x480',
-    quality: 'SD+',
-  },
-  {
-    key: 'hqdefault',
-    label: 'High Quality',
-    resolution: '480x360',
-    quality: 'HD',
-  },
-  {
-    key: '0',
-    label: 'Thumbnail 0',
-    resolution: '480x360',
-    quality: 'HD (Static)',
-  },
-  {
-    key: 'mqdefault',
-    label: 'Medium Quality',
-    resolution: '320x180',
-    quality: 'SD',
-  },
-  { key: 'default', label: 'Default', resolution: '120x90', quality: 'Low' },
-]
-
-export default function Home() {
+export const GetThumbnail = () => {
   const [url, setUrl] = useState('')
   const [videoId, setVideoId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -76,7 +42,7 @@ export default function Home() {
       const zip = new JSZip()
 
       await Promise.all(
-        thumbnailVariants.map(async ({ key, label }) => {
+        THUMBNAIL_VARIANTS.map(async ({ key, label }) => {
           const imageUrl = `https://img.youtube.com/vi/${videoId}/${key}.jpg`
           const res = await fetch(imageUrl)
           const blob = await res.blob()
@@ -94,10 +60,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen p-10">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        🎬 YouTube Thumbnail Downloader
-      </h1>
+    <>
       <form
         onSubmit={handleGenerate}
         className="flex max-w-2xl mb-6 mx-auto space-x-2"
@@ -156,7 +119,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {thumbnailVariants.map(
+                {THUMBNAIL_VARIANTS.map(
                   ({ key, label, resolution, quality }) => (
                     <div
                       key={key}
@@ -208,6 +171,6 @@ export default function Home() {
           </CardContent>
         </Card>
       </If>
-    </main>
+    </>
   )
 }

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:run": "next build && next start",
     "start": "next start",
     "lint": "eslint",
     "lint:fix": "npx eslint . --fix"

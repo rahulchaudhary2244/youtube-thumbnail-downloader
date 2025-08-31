@@ -16,7 +16,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'YouTube Thumbnail Downloader',
   description: 'Download YouTube video thumbnails easily.',
-  openGraph: {},
 }
 
 export default function RootLayout({

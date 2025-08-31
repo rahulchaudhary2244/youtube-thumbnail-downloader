@@ -51,7 +51,7 @@ export default function RootLayout({
         />
       </Head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50`}
       >
         <main className="min-h-screen p-10">
           <h1 className="text-2xl font-bold mb-4 text-center">

@@ -7,7 +7,5 @@ type Props = {
 export default async function Page({ params }: Props) {
   const { videoId } = await params
 
-  console.log(videoId)
-
   return <GenerateThumbnail videoId={videoId} />
 }

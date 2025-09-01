@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import '@/app/globals.css'
-import Head from 'next/head'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,26 +25,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebApplication',
-              name: 'YouTube Thumbnail Downloader',
-              url: 'https://youtube-thumbnail-downloader-easy.vercel.app/',
-              applicationCategory: 'Utilities',
-              operatingSystem: 'All',
-              description: 'Instantly download YouTube video thumbnails.',
-              creator: {
-                '@type': 'Person',
-                name: 'Rahul Chaudhary',
-              },
-            }),
-          }}
-        />
-      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50`}
       >

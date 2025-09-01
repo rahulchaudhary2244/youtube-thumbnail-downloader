@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { fetchImage, getFullImageUrl } from './utils'
+import { getFullImageUrl } from './utils'
 import { ArrowDownToLine, Eye } from 'lucide-react'
 import { Button } from './ui/button'
 import Link from 'next/link'

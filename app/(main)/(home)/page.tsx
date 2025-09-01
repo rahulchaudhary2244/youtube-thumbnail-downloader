@@ -15,5 +15,12 @@ export default async function Page({ searchParams }: Props) {
     redirect(`/video/${videoId}`)
   }
 
-  return <HomePageInputForm initialUrl={v ?? ''} />
+  return (
+    <>
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        🎬 YouTube Thumbnail Downloader
+      </h1>
+      <HomePageInputForm initialUrl={v ?? ''} />
+    </>
+  )
 }

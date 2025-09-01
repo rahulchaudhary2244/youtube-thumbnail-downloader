@@ -49,12 +49,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50`}
       >
-        <main className="min-h-screen p-10">
-          <h1 className="text-2xl font-bold mb-4 text-center">
-            🎬 YouTube Thumbnail Downloader
-          </h1>
-          {children}
-        </main>
+        <main className="min-h-screen p-10">{children}</main>
       </body>
     </html>
   )

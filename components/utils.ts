@@ -1,6 +1,10 @@
-export const extractVideoId = (youtubeUrl: string) => {
-  const regex = /(?:youtube\.com\/.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-  const match = youtubeUrl.match(regex)
+export const extractVideoId = (input: string) => {
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) {
+    return input
+  }
+  const regex =
+    /(?:v=|\/(?:shorts|live|embed|watch)\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  const match = input.match(regex)
   return match ? match[1] : null
 }
 

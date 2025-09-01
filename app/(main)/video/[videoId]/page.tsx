@@ -1,40 +1,55 @@
 import { GenerateThumbnail } from '@/components/generate-thumbnail/generate-thumbnail'
+import { extractVideoId, getFullImageUrl } from '@/components/utils'
+import { Metadata } from 'next'
 
 type Props = {
   params: Promise<{ videoId: string }>
 }
 
-const fetchVideoData = async (videoId: string) => {
-  const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+const getPageTitle = (title: string) => {
+  return `YouTube Thumbnail Downloader - ${title}`
+}
 
+const fetchVideo = async (videoId: string) => {
   try {
-    const res = await fetch(url, { next: { revalidate: 86400 } }) // cache for 1 day
-    if (!res.ok) throw new Error('Failed to fetch video metadata')
-    return res.json()
-  } catch (error) {
-    return null
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+    const res = await fetch(`${baseUrl}/api/video?v=${videoId}`)
+    const data = await res.json()
+    return data as { title: string; video_id: string }
+  } catch (err) {
+    console.error('Error fetching video', err)
+    return {
+      title: 'Free best quality YouTube thumbnails',
+      video_id: 'ygJcTggSQQU',
+    }
   }
 }
 
-export const generateMetadata = async ({ params }: Props) => {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { videoId } = await params
-  const data = await fetchVideoData(videoId)
 
-  if (!data) {
-    return {
-      title: 'YouTube Thumbnail Downloader',
-      description: 'Download YouTube video thumbnails in HD.',
-    }
-  }
+  const id = extractVideoId(videoId)
+  if (id === null) return {}
+
+  const { title } = await fetchVideo(id)
+
+  const description = `Download high-quality thumbnails from the YouTube video: ${title}`
+  const pageTitle = getPageTitle(title)
 
   return {
-    title: `${data.title} - YouTube Thumbnail Downloader`,
-    description: `Download the thumbnail of "${data.title}" from ${data.author_name} in best quality.`,
+    title: pageTitle,
+    description,
     openGraph: {
-      title: `${data.title} - YouTube Thumbnail Downloader`,
-      description: `Download the thumbnail of "${data.title}" in best quality.`,
-      url: `https://youtube-thumbnail-downloader-easy.vercel.app/video/${videoId}`,
-      type: 'website',
+      title: pageTitle,
+      description,
+      url: `https://youtube-thumbnail-downloader-easy.vercel.app/video/${id}`,
+      images: [getFullImageUrl(id, 'hqdefault')],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [getFullImageUrl(id, 'hqdefault')],
     },
   }
 }
@@ -42,5 +57,17 @@ export const generateMetadata = async ({ params }: Props) => {
 export default async function Page({ params }: Props) {
   const { videoId } = await params
 
-  return <GenerateThumbnail videoId={videoId} />
+  const id = extractVideoId(videoId)
+
+  if (id === null) return null
+
+  const { title } = await fetchVideo(id)
+  const pageTitle = getPageTitle(title)
+
+  return (
+    <>
+      <h1 className="text-2xl font-bold mb-4 text-center">🎬 {pageTitle}</h1>
+      <GenerateThumbnail videoId={id} />
+    </>
+  )
 }

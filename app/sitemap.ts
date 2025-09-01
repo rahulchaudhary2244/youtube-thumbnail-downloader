@@ -1,30 +1,31 @@
 import { MetadataRoute } from 'next'
+import { supabase } from '@/lib/supabase'
 
-export const revalidate = 60 * 60
+const baseUrl = 'https://youtube-thumbnail-downloader-easy.vercel.app'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://youtube-thumbnail-downloader-easy.vercel.app'
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { data: videos } = await supabase
+    .from('videos')
+    .select('video_id, created_at')
 
-  const videoIds = ['dQw4w9WgXcQ', '9bZkp7q19f0']
+  const videoEntries =
+    videos?.map((v) => ({
+      url: `${baseUrl}/video/${v.video_id}`,
+      lastModified: v.created_at,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })) ?? []
 
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 1.0,
+      priority: 1,
     },
-    ...(videoIds.map((id) => ({
-      url: `${baseUrl}/video/${id}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    })) satisfies MetadataRoute.Sitemap),
-    ...(videoIds.map((id) => ({
-      url: `${baseUrl}/?v=${id}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    })) satisfies MetadataRoute.Sitemap),
+    ...videoEntries,
   ]
 }
+
+// Revalidate sitemap every 24 hours
+export const revalidate = 86400
